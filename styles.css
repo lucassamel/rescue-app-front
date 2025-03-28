@@ -21,11 +21,20 @@ body {
     overflow: hidden;
 }
 
-#mapa .ponto {
+#mapa .vehicule {
     position: absolute;
     width: 6px;
     height: 6px;
     background-color: red;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#mapa .rescue-point {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: rgb(4, 1, 218);
     border-radius: 50%;
     transform: translate(-50%, -50%);
 }
