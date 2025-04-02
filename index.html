@@ -29,22 +29,49 @@
                 <button onclick="rescueAction(-50, -50, 50, 50)">Mover Ponto de (-50, -50) para (50, 50)</button>
             </div>
 
+            <!-- Menu -->
             <div class="col-sm">
                 <div class="row">
-                    <div class="col-sm">
-                        <button type="button" class="btn btn-danger">Danger</button>
+                    <div>
+                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+
+                            <div class="btn-group" role="group">
+                                <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Vehicule
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                    <li value="1" onclick="changeMenu(1)"><a class="dropdown-item">New
+                                            Vehicule</a></li>
+                                    <li value="2" onclick="changeMenu(2)"><a class="dropdown-item">Vehicule
+                                            List</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Rescue Point
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                <li vale="3" onclick="changeMenu(3)"><a class="dropdown-item">New Rescue
+                                        Point</a></li>
+                                <li value="4" onclick="changeMenu(4)"><a class="dropdown-item">Rescue Point
+                                        List</a></li>
+                            </ul>
+                        </div>
                     </div>
-                    <div class="col-sm">
-                        <button type="button" class="btn btn-warning">Warning</button>   
-                    </div>
-                </div>
-                <form id="form" class="form needs-validation">
+                </div> 
+                
+                <!-- Form Vehicule -->
+           
+                <form id="form" class="form needs-validation menu">
                     <div class="mb-3">
                         <label for="exampleInputEmail1" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="vehiculeName" >  
+                        <input type="text" class="form-control" id="vehiculeName">
                         <div class="invalid-feedback">
                             Please provide a valid city.
-                          </div>                      
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="exampleInputPassword1" class="form-label">Latitude</label>
@@ -62,10 +89,102 @@
                     </div>
 
                     <button type="submit" onclick="newVehicule()" class="btn btn-primary">Submit</button>
-                    <button onclick="rescue()" class="btn btn-primary">Submit</button>
+                    <button onclick="rescue()" class="btn btn-primary">Submit Rescue Point</button>
                 </form>
+            
+            
+            <!-- Table Vehicule -->
+            <div class="col-sm menu d-none">
+                <table class="table" id="table-vehicule">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Latitude</th>
+                            <th scope="col">Longitude</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+                <nav>
+                    <ul class="pagination justify-content-center" id="paginacao">
+                      <!-- Botões de paginação -->
+                    </ul>
+                  </nav>
             </div>
+
+            <!-- Form Rescue Point -->
+            <form id="form" class="form needs-validation menu d-none">
+                <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="vehiculeName">
+                    <div class="invalid-feedback">
+                        Please provide a valid city.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Latitude</label>
+                    <input type="number" max="100" min="-100" class="form-control latLong" id="vehiculeLatitude">
+                    <div class="invalid-feedback">
+                        The number should be between -100 and 100.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Longitude</label>
+                    <input type="number" max="100" min="-100" class="form-control latLong" id="vehiculeLongitude">
+                    <div class="invalid-feedback">
+                        The number should be between -100 and 100.
+                    </div>
+                </div>
+
+                <button type="submit" onclick="newVehicule()" class="btn btn-primary">Submit</button>
+                <button onclick="rescue()" class="btn btn-primary">Submit Rescue Point</button>
+            </form>
+
+            <!-- Table Rescue Point -->
+            <div class="col-sm menu d-none">
+                <table class="table" id="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Latitude</th>
+                            <th scope="col">Longitude</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td scope="row">Mark</td>
+                            <td>Otto</td>
+                            <td>@mdo</td>
+                        </tr>
+                        <tr>
+                            <td scope="row">Jacob</td>
+                            <td>Thornton</td>
+                            <td>@fat</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td>Larry the Bird</td>
+                            <td>@twitter</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            </div>
+
+           
+            
+
+
         </div>
+    </div>
+
+  
+
+    </div>
     </div>
 
 

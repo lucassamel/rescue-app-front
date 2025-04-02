@@ -174,3 +174,145 @@ formulario.addEventListener('submit', function (event) {
       }, false)
     })
 })()
+
+/*
+  --------------------------------------------------------------------------------------
+  Função para obter a lista existente do servidor via requisição GET
+  --------------------------------------------------------------------------------------
+*/
+const getVehiculeList = async () => {
+  let url = 'http://127.0.0.1:5000/vehicule';
+  fetch(url, {
+    method: 'get',
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      // data.vehicules.forEach(item => insertVehiculeList(item.nome, item.quantidade, item.valor))
+      setUpTable(data.vehicules, 'table-vehicule');
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
+
+/*
+  --------------------------------------------------------------------------------------
+  Função para inserir items na lista apresentada
+  --------------------------------------------------------------------------------------
+*/
+const insertVehiculeList = (id, name, latitude, longitude) => {
+  var vehicule = [id, name, latitude, longitude]
+  var table = document.getElementById('table');
+  var row = table.insertRow();
+
+  for (var i = 0; i < item.length; i++) {
+    var cel = row.insertCell(i);
+    cel.textContent = item[i];
+  }
+  insertButton(row.insertCell(-1))
+  document.getElementById("newInput").value = "";
+  document.getElementById("newQuantity").value = "";
+  document.getElementById("newPrice").value = "";
+
+  removeElement()
+};
+
+function setUpTable(lista, elementId) {
+  
+  const table = document.getElementById(elementId); 
+  const tbody = table.querySelector('tbody'); 
+ 
+  if (tbody) {
+    while (tbody.firstChild) {
+      tbody.removeChild(tbody.firstChild);
+    }
+  }
+  
+  let element = "#"+elementId;
+
+  $(element).find("tbody").html(
+    lista.map(x => `
+   <tr>
+   <td>${x.name}</td>
+   <td>${x.latitude}</td>                    
+   <td>${x.longitude}</td>
+   <td>
+   <a  class='btn btn-outline-info btn-sm btnEditar'   
+   data-toggle="tooltip" title="Editar"
+   data-id='${x.id}'>
+   <i class="fa fa-edit"></i>
+   </a>
+   <button type="button"
+   class='btn btn-outline-danger btn-sm btnExcluir'
+   data-id='${x.id}'
+   data-toggle="tooltip" title="Excluir">
+   <i class="fa fa-times"></i>
+   </button>
+  
+  > </td>
+  > </tr>`).join(""));
+};
+
+function limparTabela(idTabela) {
+  const tabela = document.getElementById(idTabela); // Seleciona a tabela pelo ID
+  const tbody = tabela.querySelector('tbody'); // Seleciona o corpo da tabela
+
+  // Remove todas as linhas do corpo da tabela
+  if (tbody) {
+    while (tbody.firstChild) {
+      tbody.removeChild(tbody.firstChild);
+    }
+  }
+}
+
+/*
+  --------------------------------------------------------------------------------------
+  Function to change the menu
+  --------------------------------------------------------------------------------------
+*/
+const changeMenu = (menuId) => {
+
+  const elementos = document.querySelectorAll('.menu'); // Seleciona os elementos que serão manipulados
+  const classe = 'd-none'; // Nome da classe a ser adicionada ou removida
+
+  // Remove a classe de todos os elementos antes de adicionar a nova
+  elementos.forEach(elemento => elemento.classList.add(classe));
+
+  // Switch case para diferentes opções
+  switch (menuId) {
+    case 1: // Vehicule Form
+      elementos.forEach((elemento, index) => {
+        if (index === 0) {
+          elemento.classList.remove(classe);
+        }
+      });
+      break;
+    case 2: // Vehicule List
+      elementos.forEach((elemento, index) => {
+        if (index === 1) {
+          elemento.classList.remove(classe);
+        }
+      });
+      getVehiculeList();
+      break;
+    case 3: // Rescue Form
+      elementos.forEach((elemento, index) => {
+        if (index === 2) {
+          elemento.classList.remove(classe);
+        }
+      });
+      break;
+    case 4: // Rescue List
+      elementos.forEach((elemento, index) => {
+        if (index === 3) {
+          elemento.classList.remove(classe);
+        }
+      });
+      break;
+    default:
+      console.log('Opção inválida!');
+  }
+};
+
+
+
