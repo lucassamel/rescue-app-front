@@ -8,6 +8,14 @@ body {
     height: 100vh;
 }
 
+.box {
+    width: 300px; /* Define a largura fixa */
+    height: 650px; /* Define a altura fixa */
+    background-color: #f0f0f0; /* Apenas para visibilidade */
+    border: 1px solid #ccc;
+    overflow: auto;
+}
+
 #mapa {
     position: relative;
     width: 500px;

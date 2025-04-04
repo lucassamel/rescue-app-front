@@ -187,7 +187,6 @@ const getVehiculeList = async () => {
   })
     .then((response) => response.json())
     .then((data) => {
-      // data.vehicules.forEach(item => insertVehiculeList(item.nome, item.quantidade, item.valor))
       setUpTable(data.vehicules, 'table-vehicule');
     })
     .catch((error) => {
@@ -197,25 +196,22 @@ const getVehiculeList = async () => {
 
 /*
   --------------------------------------------------------------------------------------
-  Função para inserir items na lista apresentada
+  Função para obter a lista existente do servidor via requisição GET
   --------------------------------------------------------------------------------------
 */
-const insertVehiculeList = (id, name, latitude, longitude) => {
-  var vehicule = [id, name, latitude, longitude]
-  var table = document.getElementById('table');
-  var row = table.insertRow();
-
-  for (var i = 0; i < item.length; i++) {
-    var cel = row.insertCell(i);
-    cel.textContent = item[i];
-  }
-  insertButton(row.insertCell(-1))
-  document.getElementById("newInput").value = "";
-  document.getElementById("newQuantity").value = "";
-  document.getElementById("newPrice").value = "";
-
-  removeElement()
-};
+const getRescuePointList = async () => {
+  let url = 'http://127.0.0.1:5000/rescue-point';
+  fetch(url, {
+    method: 'get',
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      setUpTable(data.rescue_points, 'table-rescue-point');
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
 
 function setUpTable(lista, elementId) {
   
@@ -233,37 +229,30 @@ function setUpTable(lista, elementId) {
   $(element).find("tbody").html(
     lista.map(x => `
    <tr>
-   <td>${x.name}</td>
-   <td>${x.latitude}</td>                    
-   <td>${x.longitude}</td>
-   <td>
-   <a  class='btn btn-outline-info btn-sm btnEditar'   
-   data-toggle="tooltip" title="Editar"
-   data-id='${x.id}'>
-   <i class="fa fa-edit"></i>
-   </a>
-   <button type="button"
-   class='btn btn-outline-danger btn-sm btnExcluir'
-   data-id='${x.id}'
-   data-toggle="tooltip" title="Excluir">
-   <i class="fa fa-times"></i>
-   </button>
-  
-  > </td>
-  > </tr>`).join(""));
+    <td>${x.name}</td>
+    <td>${x.latitude}</td>                    
+    <td>${x.longitude}</td>
+    <td>
+    <a  class='btn btn-outline-info btn-sm btnEditar'   
+    data-toggle="tooltip" title="Editar"
+    data-id='${x.id}'>
+    <i class="fa fa-edit"></i>
+    </a>
+    <button type="button"
+    class='btn btn-outline-danger btn-sm btnExcluir'
+    data-id='${x.id}'
+    data-toggle="tooltip" title="Excluir">
+    <i class="fa fa-times"></i>
+    </button>
+
+   </td>
+   </tr>`).join(""));
+
+  $(document).ready( function () {
+    $(element).DataTable();
+  } );
+
 };
-
-function limparTabela(idTabela) {
-  const tabela = document.getElementById(idTabela); // Seleciona a tabela pelo ID
-  const tbody = tabela.querySelector('tbody'); // Seleciona o corpo da tabela
-
-  // Remove todas as linhas do corpo da tabela
-  if (tbody) {
-    while (tbody.firstChild) {
-      tbody.removeChild(tbody.firstChild);
-    }
-  }
-}
 
 /*
   --------------------------------------------------------------------------------------
@@ -308,6 +297,7 @@ const changeMenu = (menuId) => {
           elemento.classList.remove(classe);
         }
       });
+      getRescuePointList();
       break;
     default:
       console.log('Opção inválida!');
