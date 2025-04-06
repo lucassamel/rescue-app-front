@@ -59,7 +59,7 @@ function createRescue(x, y, id) {
   const map = document.getElementById('map');
   const point = document.createElement('div');
   point.className = 'rescue-point';
-  point.dataset.id = `${id}`; 
+  point.id = `${id}`;
 
   // Convert the coordinates to relative positions
   const posX = (x + 100) * scale;
@@ -210,6 +210,82 @@ const newVehicule = () => {
   }
 }
 
+const getVehiculeList = async () => {
+  let url = 'http://127.0.0.1:5000/vehicule';
+  fetch(url, {
+    method: 'get',
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      setUpTable(data.vehicules, 'table-vehicule', true);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
+
+const getRescuePointList = async () => {
+  let url = 'http://127.0.0.1:5000/rescue-point';
+  fetch(url, {
+    method: 'get',
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      setUpTable(data.rescue_points, 'table-rescue-point', false);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
+
+const perfomRescue = (id) => {
+  let url = `http://127.0.0.1:5000/perform-rescue?id=${id}`;
+  fetch(url, {
+    method: 'get',
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      moveVehicule(0, 0, data.rescue_point.longitude, data.rescue_point.latitude);
+      getVehiculeList();
+      setInterval(() => {
+        // clearPoint(data.rescue_point.longitude, data.rescue_point.latitude);
+
+        const elements = $(`#${data.rescue_point.id}.rescue-point`);
+        // rescueAction(0, 0, data.rescue_point.longitude, data.rescue_point.latitude);
+
+        elements.remove(); // Remove the rescue point from the DOM
+      }, 1000); // 2 seconds delay before clearing the point      
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+
+};
+
+const deleteRescue = (id) => {
+  let url = `http://127.0.0.1:5000/rescue-point?id=${id}`;
+  fetch(url, {
+    method: 'delete',
+  })
+    .then((response) => response.json())
+    .then((data) => {      
+      const container = document.getElementById('map');
+      
+      const elementos = container.querySelectorAll('.rescue-point');
+
+      elementos.forEach(elemento => {
+        elemento.remove();
+      });
+      getRescuePointList();
+      initialLoad();
+      alert('Rescue Point deleted!');
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+
+};
+
 /*
 --------------------------------------------------------------------------------------
 This function is used to validate the input fields for vehicule name, latitude and longitude
@@ -261,14 +337,120 @@ listForms.forEach(id => {
     })
 })()
 
+
 /**
- * Fetches the list of vehicles from the server and populates a table with the data.
- * 
- * This function sends a GET request to the specified URL to retrieve vehicle data.
- * On success, it processes the response and calls the `setUpTable` function to display
- * the data in a table. If an error occurs during the fetch operation, it logs the error
- * to the console.
- * 
+ * Populates an HTML table with data and initializes it as a DataTable.
+ *
+ * @param {Array<Object>} lista - An array of objects containing the data to populate the table.
+ * @param {string} elementId - The ID of the table element to populate.
+ *
+ * Each object in the `lista` array should have the following properties:
+ * - {string} name - The name to display in the first column.
+ * - {number} latitude - The latitude to display in the second column.
+ * - {number} longitude - The longitude to display in the third column.
+ * - {number} id - The unique identifier used for the "Edit" button.
+ *
+ * The function clears any existing rows in the table body, appends new rows based on the `lista` data,
+ * and initializes the table as a DataTable using the jQuery DataTables plugin.
+ */
+function setUpTable(lista, elementId) {
+
+  const table = document.getElementById(elementId);
+  const tbody = table.querySelector('tbody');
+
+  if (tbody) {
+    while (tbody.firstChild) {
+      tbody.removeChild(tbody.firstChild);
+    }
+  }
+
+  let element = "#" + elementId;
+
+  $(element).find("tbody").html(
+    lista.map(x => `
+   <tr>
+    <td>${x.name}</td>
+    <td>${x.latitude}</td>                    
+    <td>${x.longitude}</td>
+    <td>
+    <a  class='btn btn-outline-success btn-sm btnEditar'   
+    data-toggle="tooltip" title="Editar"
+    data-id='${x.id}' onclick="perfomRescue(${x.id})">
+    <i class="fa fa-play"></i>
+    </a>    
+
+   </td>
+   </tr>`).join(""));
+
+  $(document).ready(function () {
+    $(element).DataTable();
+  });
+
+};
+
+/**
+ * Changes the visibility of menu sections based on the provided menu ID.
+ * It hides all menu sections by adding a specific CSS class and then
+ * displays the section corresponding to the given menu ID.
+ *
+ * @param {number} menuId - The ID of the menu to display:
+ *   - 1: Displays the "Vehicule Form" section.
+ *   - 2: Displays the "Vehicule List" section and fetches the vehicule list.
+ *   - 3: Displays the "Rescue Form" section.
+ *   - 4: Displays the "Rescue List" section and fetches the rescue point list.
+ *
+ * @throws {Error} Logs an error message if an invalid menu ID is provided.
+ */
+const changeMenu = (menuId) => {
+
+  const elementos = document.querySelectorAll('.menu'); // Seleciona os elementos que serão manipulados
+  const classe = 'd-none'; // Nome da classe a ser adicionada ou removida
+
+  // Remove a classe de todos os elementos antes de adicionar a nova
+  elementos.forEach(elemento => elemento.classList.add(classe));
+
+  // Switch case para diferentes opções
+  switch (menuId) {
+    case 1: // Vehicule Form
+      elementos.forEach((elemento, index) => {
+        if (index === 0) {
+          elemento.classList.remove(classe);
+        }
+      });
+      break;
+    case 2: // Vehicule List
+      elementos.forEach((elemento, index) => {
+        if (index === 1) {
+          elemento.classList.remove(classe);
+        }
+      });
+      getVehiculeList();
+      break;
+    case 3: // Rescue Form
+      elementos.forEach((elemento, index) => {
+        if (index === 2) {
+          elemento.classList.remove(classe);
+        }
+      });
+      break;
+    case 4: // Rescue List
+      elementos.forEach((elemento, index) => {
+        if (index === 3) {
+          elemento.classList.remove(classe);
+        }
+      });
+      getRescuePointList();
+      break;
+    default:
+      console.log('Opção inválida!');
+  }
+};
+
+/**
+ * Initializes the application by loading rescue points from the server
+ * and creating rescue markers on the map.
+ *
+ * @function
  * @async
  * @function getVehiculeList
  * @returns {Promise<void>} A promise that resolves when the vehicle data is fetched and processed.
@@ -284,7 +466,7 @@ const initialLoad = () => {
       .then((response) => response.json())
       .then((data) => {
         data.rescue_points.forEach((point) => {
-          createRescue(point.longitude, point.latitude,point.id);
+          createRescue(point.longitude, point.latitude, point.id);
         });
       })
       .catch((error) => {
