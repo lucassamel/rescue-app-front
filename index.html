@@ -14,15 +14,18 @@
 
 <body>
     <div class="container box">
-        <div>
-            <h1>Projeto SOS Rescue</h1>
-            <p>Este é um projeto de exemplo para a disciplina de Desenvolvimento de Software para Web</p>
+        <div class="row justify-content-md-center">
+            <div class="col-sm-12 text-center">                
+                <h1>Projeto SOS Rescue</h1>
+                <p>Este é um projeto de exemplo para a disciplina de Desenvolvimento de Software para Web</p>
+            </div>
+            
         </div>
 
         <div class="row">
             <div class="col-sm ">
                 <h1>Plano Cartesiano com Movimento</h1>
-                <div id="mapa">
+                <div id="map">
                     <div class="linha horizontal"></div>
                     <div class="linha vertical"></div>
                 </div>
@@ -30,8 +33,10 @@
                 <button onclick="rescueAction(-50, -50, 50, 50)">Mover Ponto de (-50, -50) para (50, 50)</button>
             </div>
 
-            <!-- Menu -->
+            
             <div class="col-sm">
+
+                <!-- Menu -->
                 <div class="row">
                     <div>
                         <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
@@ -50,12 +55,12 @@
                             </div>
                         </div>
                         <div class="btn-group" role="group">
-                            <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle"
+                            <button id="btnGroupDrop1" type="button" class="btn btn-danger dropdown-toggle"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 Rescue Point
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                <li vale="3" onclick="changeMenu(3)"><a class="dropdown-item">New Rescue
+                                <li valeu="3" onclick="changeMenu(3)"><a class="dropdown-item">New Rescue
                                         Point</a></li>
                                 <li value="4" onclick="changeMenu(4)"><a class="dropdown-item">Rescue Point
                                         List</a></li>
@@ -65,8 +70,7 @@
                 </div>
 
                 <!-- Form Vehicule -->
-
-                <form id="form" class="form needs-validation menu">
+                <form id="form-vehicule" class="form needs-validation menu">
                     <div class="mb-3">
                         <label for="exampleInputEmail1" class="form-label">Name</label>
                         <input type="text" class="form-control" id="vehiculeName">
@@ -88,9 +92,7 @@
                             The number should be between -100 and 100.
                         </div>
                     </div>
-
-                    <button type="submit" onclick="newVehicule()" class="btn btn-primary">Submit</button>
-                    <button onclick="rescue()" class="btn btn-primary">Submit Rescue Point</button>
+                    <button type="submit" onclick="newVehicule()" class="btn btn-success">Submit Vehicule</button>                    
                 </form>
 
 
@@ -113,7 +115,7 @@
                 </div>
 
                 <!-- Form Rescue Point -->
-                <form id="form" class="form needs-validation menu d-none">
+                <form id="form-rescue-point" class="form needs-validation menu d-none">
                     <div class="mb-3">
                         <label for="exampleInputEmail1" class="form-label">Name</label>
                         <input type="text" class="form-control" id="vehiculeName">
@@ -136,8 +138,8 @@
                         </div>
                     </div>
 
-                    <button type="submit" onclick="newVehicule()" class="btn btn-primary">Submit</button>
-                    <button onclick="rescue()" class="btn btn-primary">Submit Rescue Point</button>
+                    <button onclick="rescue()" class="btn btn-warning">Create 50 randon points</button>
+                    <button type="submit" onclick="rescue()" class="btn btn-success">Submit Rescue Point</button>
                 </form>
 
                 <!-- Table Rescue Point -->
@@ -159,7 +161,6 @@
 
         </div>
     </div>
-
 
 
     <script src="scripts.js"></script>

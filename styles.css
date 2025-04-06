@@ -16,7 +16,7 @@ body {
     overflow: auto;
 }
 
-#mapa {
+#map {
     position: relative;
     width: 500px;
     height: 500px;
@@ -29,22 +29,34 @@ body {
     overflow: hidden;
 }
 
-#mapa .vehicule {
+#map .vehicule {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: blue;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+#map .rescue-point {
     position: absolute;
     width: 6px;
     height: 6px;
     background-color: red;
     border-radius: 50%;
     transform: translate(-50%, -50%);
+    z-index: 1;
 }
 
-#mapa .rescue-point {
+#map .clear-point {
     position: absolute;
     width: 6px;
     height: 6px;
-    background-color: rgb(4, 1, 218);
+    background-color: white;
     border-radius: 50%;
     transform: translate(-50%, -50%);
+    z-index: 3;
 }
 
 .linha {

@@ -1,105 +1,165 @@
-const escala = 500 / 200; // Escala para o plano cartesiano (-100 a 100)
+/**
+ * The scale factor used for resizing or transforming dimensions.
+ * It is calculated as the ratio of a target size to an original size.
+ * 
+ * @constant {number}
+ */
+const scale = 500 / 200;
 
-function criarPonto(x, y) {
-  const mapa = document.getElementById('mapa');
-  const ponto = document.createElement('div');
-  ponto.className = 'vehicule';
+/*
+  --------------------------------------------------------------------------------------
+  This function is used to create the vehicule on the map
+  It takes the x and y coordinates as parameters and creates a div element with the class 'vehicule'
+  --------------------------------------------------------------------------------------
+*/
+/**
+ * Creates a vehicle element on the map at the specified coordinates.
+ *
+ * @param {number} x - The x-coordinate of the vehicle's position.
+ * @param {number} y - The y-coordinate of the vehicle's position.
+ * @returns {HTMLDivElement} The created vehicle element.
+ */
+function createVehicule(x, y) {
+  const map = document.getElementById('map');
+  const point = document.createElement('div');
+  point.className = 'vehicule';
 
-  // Converte as coordenadas para posições relativas
-  const posX = (x + 100) * escala;
-  const posY = (100 - y) * escala;
+  const posX = (x + 100) * scale;
+  const posY = (100 - y) * scale;
 
-  ponto.style.left = `${posX}px`;
-  ponto.style.top = `${posY}px`;
-  mapa.appendChild(ponto);
-  return ponto;
-}
-
-function createRescue(x, y) {
-  const mapa = document.getElementById('mapa');
-  const ponto = document.createElement('div');
-  ponto.className = 'rescue-point';
-
-  // Converte as coordenadas para posições relativas
-  const posX = (x + 100) * escala;
-  const posY = (100 - y) * escala;
-
-  ponto.style.left = `${posX}px`;
-  ponto.style.top = `${posY}px`;
-  mapa.appendChild(ponto);
-  return ponto;
-}
-
-function moverPonto(xInicial, yInicial, xFinal, yFinal) {
-  const ponto = criarPonto(xInicial, yInicial); // Cria o ponto na posição inicial
-
-  let xAtual = xInicial;
-  let yAtual = yInicial;
-
-  const passo = 1; // Passo do movimento (quanto ele se desloca a cada iteração)
-  const intervalo = 20; // Intervalo entre os movimentos, em milissegundos
-
-  const mover = setInterval(() => {
-    // Verifica se o ponto chegou ao destino
-    if (Math.abs(xAtual - xFinal) < 1 && Math.abs(yAtual - yFinal) < 1) {
-      clearInterval(mover); // Para o movimento
-      return;
-    }
-
-    // Atualiza as coordenadas, movendo gradualmente
-    xAtual += (xFinal - xAtual) * 0.1; // Movimento suave no eixo X
-    yAtual += (yFinal - yAtual) * 0.1; // Movimento suave no eixo Y
-
-    // Converte as novas coordenadas para posições relativas
-    const posX = (xAtual + 100) * escala;
-    const posY = (100 - yAtual) * escala;
-
-    ponto.style.left = `${posX}px`;
-    ponto.style.top = `${posY}px`;
-  }, intervalo);
-}
-
-function rescueAction(xInicial, yInicial, xFinal, yFinal) {
-  const ponto = createRescue(xInicial, yInicial); // Cria o ponto na posição inicial
-
-  let xAtual = xInicial;
-  let yAtual = yInicial;
-
-  const passo = 1; // Passo do movimento (quanto ele se desloca a cada iteração)
-  const intervalo = 20; // Intervalo entre os movimentos, em milissegundos
-
-  const mover = setInterval(() => {
-    // Verifica se o ponto chegou ao destino
-    if (Math.abs(xAtual - xFinal) < 1 && Math.abs(yAtual - yFinal) < 1) {
-      clearInterval(mover); // Para o movimento
-      return;
-    }
-
-    // Atualiza as coordenadas, movendo gradualmente
-    xAtual += (xFinal - xAtual) * 0.1; // Movimento suave no eixo X
-    yAtual += (yFinal - yAtual) * 0.1; // Movimento suave no eixo Y
-
-    // Converte as novas coordenadas para posições relativas
-    const posX = (xAtual + 100) * escala;
-    const posY = (100 - yAtual) * escala;
-
-    ponto.style.left = `${posX}px`;
-    ponto.style.top = `${posY}px`;
-  }, intervalo);
+  point.style.left = `${posX}px`;
+  point.style.top = `${posY}px`;
+  map.appendChild(point);
+  return point;
 }
 
 /*
   --------------------------------------------------------------------------------------
-  Função para colocar um item na lista do servidor via requisição POST
+  This function is used to clear any point on the map  I
   --------------------------------------------------------------------------------------
 */
-const postItem = async (inputName, inputLatitude, inputLongitude) => {
+/**
+ * Creates and appends a visual marker (clear-point) to the map at the specified coordinates.
+ *
+ * @param {number} x - The x-coordinate of the point to clear, relative to the map.
+ * @param {number} y - The y-coordinate of the point to clear, relative to the map.
+ * @returns {HTMLDivElement} The created DOM element representing the clear-point.
+ */
+function clearPoint(x, y) {
+  const map = document.getElementById('map');
+  const point = document.createElement('div');
+  point.className = 'clear-point';
+
+  const posX = (x + 100) * scale;
+  const posY = (100 - y) * scale;
+
+  point.style.left = `${posX}px`;
+  point.style.top = `${posY}px`;
+  map.appendChild(point);
+  return point;
+}
+
+/*
+  --------------------------------------------------------------------------------------
+  This function is used to create the rescue point on the map
+  --------------------------------------------------------------------------------------
+*/
+/**
+ * Creates a rescue point on the map at the specified coordinates.
+ *
+ * @param {number} x - The x-coordinate of the rescue point in the coordinate system.
+ * @param {number} y - The y-coordinate of the rescue point in the coordinate system.
+ * @returns {HTMLDivElement} The created rescue point element.
+ */
+function createRescue(x, y, id) {
+  const map = document.getElementById('map');
+  const point = document.createElement('div');
+  point.className = 'rescue-point';
+  point.dataset.id = `${id}`; 
+
+  // Convert the coordinates to relative positions
+  const posX = (x + 100) * scale;
+  const posY = (100 - y) * scale;
+
+  point.style.left = `${posX}px`;
+  point.style.top = `${posY}px`;
+  map.appendChild(point);
+  return point;
+}
+
+/*
+  --------------------------------------------------------------------------------------
+  This function is used to move the points on the map
+  --------------------------------------------------------------------------------------
+*/
+function moveVehicule(xInitial, yInitial, xFinal, yFinal) {
+  const ponto = createVehicule(xInitial, yInitial); // Cria o ponto na posição inicial
+
+  let xCurrent = xInitial;
+  let yCurrent = yInitial;
+
+  const interval = 20; // Intervalo entre os movimentos, em milissegundos
+
+  const move = setInterval(() => {
+    // Verifica se o ponto chegou ao destino
+    if (Math.abs(xCurrent - xFinal) < 1 && Math.abs(yCurrent - yFinal) < 1) {
+      clearInterval(move); // Para o movimento
+      return;
+    }
+
+    // Atualiza as coordenadas, movendo gradualmente
+    xCurrent += (xFinal - xCurrent) * 0.1; // Movimento suave no eixo X
+    yCurrent += (yFinal - yCurrent) * 0.1; // Movimento suave no eixo Y
+
+    // Converte as novas coordenadas para posições relativas
+    const posX = (xCurrent + 100) * scale;
+    const posY = (100 - yCurrent) * scale;
+
+    ponto.style.left = `${posX}px`;
+    ponto.style.top = `${posY}px`;
+  }, interval);
+}
+
+/*
+  --------------------------------------------------------------------------------------
+  This function is used to move the rescue point on the map
+  --------------------------------------------------------------------------------------
+*/
+function rescueAction(xInitial, yInitial, xFinal, yFinal) {
+  const ponto = createRescue(xInitial, yInitial); // Cria o ponto na posição inicial
+
+  let xCurrent = xInitial;
+  let yCurrent = yInitial;
+
+  const interval = 20;
+
+  const move = setInterval(() => {
+    if (Math.abs(xCurrent - xFinal) < 1 && Math.abs(yCurrent - yFinal) < 1) {
+      clearInterval(move);
+      return;
+    }
+
+    xCurrent += (xFinal - xCurrent) * 0.1;
+    yCurrent += (yFinal - yCurrent) * 0.1;
+
+    const posX = (xCurrent + 100) * scale;
+    const posY = (100 - yCurrent) * scale;
+
+    ponto.style.left = `${posX}px`;
+    ponto.style.top = `${posY}px`;
+  }, interval);
+}
+
+/*
+  --------------------------------------------------------------------------------------
+  This function is used to post a new vehicule to the server
+  --------------------------------------------------------------------------------------
+*/
+const postVehicule = async (inputName, inputLatitude, inputLongitude) => {
   const formData = new FormData();
   formData.append('name', inputName);
   formData.append('latitude', inputLatitude);
   formData.append('longitude', inputLongitude);
-
-  console.log(formData);
 
   let url = 'http://127.0.0.1:5000/vehicule';
   fetch(url, {
@@ -107,15 +167,40 @@ const postItem = async (inputName, inputLatitude, inputLongitude) => {
     body: formData
   })
     .then((response) => console.log(response.json()))
+    .then(() => {
+      clearForm('form-vehicule');
+      alert('Vehicule submitted');
+    })
     .catch((error) => {
       console.error('Error:', error);
     });
 }
 
 /*
---------------------------------------------------------------------------------------
-Função para adicionar um novo item com nome, quantidade e valor 
---------------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------------
+  This function is used to clear the form fields
+  --------------------------------------------------------------------------------------
+*/
+function clearForm(formularioId) {
+  const formulario = document.getElementById(formularioId);
+
+  for (let elemento of formulario.elements) {
+    if (elemento.tagName === "INPUT" || elemento.tagName === "TEXTAREA") {
+      switch (elemento.type) {
+        case "text":
+        case "number":
+        case "tel":
+          elemento.value = "";
+          break;
+      }
+    }
+  }
+};
+
+/*
+  --------------------------------------------------------------------------------------
+  This function is used to validate the input fields for vehicule name, latitude and longitude
+  --------------------------------------------------------------------------------------
 */
 const newVehicule = () => {
   let inputName = document.getElementById("vehiculeName").value;
@@ -123,15 +208,19 @@ const newVehicule = () => {
   let inputLatitude = document.getElementById("vehiculeLatitude").value;
 
   if (inputName === '') {
-    alert("Escreva o nome de um item!");
+    alert("Write the name of the vehicule!");
   } else if (isNaN(inputLongitude) || isNaN(inputLatitude)) {
-    alert("Quantidade e valor precisam ser números!");
+    alert("Latitude and Longitude needs to be numbers!");
   } else {
-    postItem(inputName, inputLongitude, inputLatitude)
+    postVehicule(inputName, inputLongitude, inputLatitude)
   }
 }
 
-
+/*
+--------------------------------------------------------------------------------------
+This function is used to validate the input fields for vehicule name, latitude and longitude
+--------------------------------------------------------------------------------------
+*/
 const buttons = document.querySelectorAll('#vehiculeLongitude, #vehiculeLatitude');
 
 buttons.forEach(button => {
@@ -139,7 +228,7 @@ buttons.forEach(button => {
     const value = event.target.value;
     if (value < -100 || value > 100) {
       event.target.value = event.target.value.slice(0, -1);
-      event.target.classList.add('is-invalid');// Limpa o campo se o valor estiver fora do intervalo
+      event.target.classList.add('is-invalid');
     } else {
       event.target.classList.add('was-validated');
       event.target.classList.remove('is-invalid');
@@ -147,14 +236,17 @@ buttons.forEach(button => {
   });
 });
 
-
-const formulario = document.getElementById('form');
-
-formulario.addEventListener('submit', function (event) {
-  event.preventDefault(); // Previne o comportamento padrão do formulário (recarregar a página)
+const listForms = ['form-vehicule', 'form-rescue-point'];
+listForms.forEach(id => {
+  const form = document.getElementById(id);
+  if (form) {
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+    });
+  }
 });
 
-// Example starter JavaScript for disabling form submissions if there are invalid fields
+// Disabling form submissions if there are invalid fields
 (function () {
   'use strict'
 
@@ -177,7 +269,7 @@ formulario.addEventListener('submit', function (event) {
 
 /*
   --------------------------------------------------------------------------------------
-  Função para obter a lista existente do servidor via requisição GET
+  This function is used to get the list of vehicules from the server
   --------------------------------------------------------------------------------------
 */
 const getVehiculeList = async () => {
@@ -196,7 +288,7 @@ const getVehiculeList = async () => {
 
 /*
   --------------------------------------------------------------------------------------
-  Função para obter a lista existente do servidor via requisição GET
+  This function is used to get the list of rescue points from the server
   --------------------------------------------------------------------------------------
 */
 const getRescuePointList = async () => {
@@ -213,18 +305,38 @@ const getRescuePointList = async () => {
     });
 }
 
+/*
+  --------------------------------------------------------------------------------------
+  This fucntion is used to render the table with the data from the server
+  --------------------------------------------------------------------------------------
+*/
+/**
+ * Populates an HTML table with data and initializes it as a DataTable.
+ *
+ * @param {Array<Object>} lista - An array of objects containing the data to populate the table.
+ * @param {string} elementId - The ID of the table element to populate.
+ *
+ * Each object in the `lista` array should have the following properties:
+ * - {string} name - The name to display in the first column.
+ * - {number} latitude - The latitude to display in the second column.
+ * - {number} longitude - The longitude to display in the third column.
+ * - {number} id - The unique identifier used for the "Edit" button.
+ *
+ * The function clears any existing rows in the table body, appends new rows based on the `lista` data,
+ * and initializes the table as a DataTable using the jQuery DataTables plugin.
+ */
 function setUpTable(lista, elementId) {
-  
-  const table = document.getElementById(elementId); 
-  const tbody = table.querySelector('tbody'); 
- 
+
+  const table = document.getElementById(elementId);
+  const tbody = table.querySelector('tbody');
+
   if (tbody) {
     while (tbody.firstChild) {
       tbody.removeChild(tbody.firstChild);
     }
   }
-  
-  let element = "#"+elementId;
+
+  let element = "#" + elementId;
 
   $(element).find("tbody").html(
     lista.map(x => `
@@ -233,32 +345,39 @@ function setUpTable(lista, elementId) {
     <td>${x.latitude}</td>                    
     <td>${x.longitude}</td>
     <td>
-    <a  class='btn btn-outline-info btn-sm btnEditar'   
+    <a  class='btn btn-outline-success btn-sm btnEditar'   
     data-toggle="tooltip" title="Editar"
-    data-id='${x.id}'>
-    <i class="fa fa-edit"></i>
-    </a>
-    <button type="button"
-    class='btn btn-outline-danger btn-sm btnExcluir'
-    data-id='${x.id}'
-    data-toggle="tooltip" title="Excluir">
-    <i class="fa fa-times"></i>
-    </button>
+    data-id='${x.id}' onclick="perfomRescue(${x.id})">
+    <i class="fa fa-play"></i>
+    </a>    
 
    </td>
    </tr>`).join(""));
 
-  $(document).ready( function () {
+  $(document).ready(function () {
     $(element).DataTable();
-  } );
+  });
 
 };
 
 /*
   --------------------------------------------------------------------------------------
-  Function to change the menu
+  This function is used to change the menu when the user clicks on the button
   --------------------------------------------------------------------------------------
 */
+/**
+ * Changes the visibility of menu sections based on the provided menu ID.
+ * It hides all menu sections by adding a specific CSS class and then
+ * displays the section corresponding to the given menu ID.
+ *
+ * @param {number} menuId - The ID of the menu to display:
+ *   - 1: Displays the "Vehicule Form" section.
+ *   - 2: Displays the "Vehicule List" section and fetches the vehicule list.
+ *   - 3: Displays the "Rescue Form" section.
+ *   - 4: Displays the "Rescue List" section and fetches the rescue point list.
+ *
+ * @throws {Error} Logs an error message if an invalid menu ID is provided.
+ */
 const changeMenu = (menuId) => {
 
   const elementos = document.querySelectorAll('.menu'); // Seleciona os elementos que serão manipulados
@@ -304,5 +423,78 @@ const changeMenu = (menuId) => {
   }
 };
 
+/*
+  --------------------------------------------------------------------------------------
+  This function is used to perform the rescue action
+  --------------------------------------------------------------------------------------
+*/
+/**
+ * Performs a rescue operation by sending a GET request to the specified endpoint with the given ID.
+ * Upon success, it moves the vehicle to the rescue point, updates the vehicle list, and clears the rescue point after a delay.
+ *
+ * @param {number|string} id - The identifier of the rescue operation.
+ * @returns {void}
+ */
+const perfomRescue = (id) => {
+  let url = `http://127.0.0.1:5000/perform-rescue?id=${id}`;
+  fetch(url, {
+    method: 'get',
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      moveVehicule(0, 0, data.rescue_point.longitude, data.rescue_point.latitude);
+      getVehiculeList();
+      setInterval(() => {
+        // clearPoint(data.rescue_point.longitude, data.rescue_point.latitude);
+        
+        const elements = document.querySelectorAll(`.${data.rescue_point.id}`);
+        
+        elements.forEach((element) => {
+          element.remove();
+        });
+      }, 2000); // 2 seconds delay before clearing the point      
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
 
+};
 
+/*
+  --------------------------------------------------------------------------------------
+  Initial loading funciton
+  --------------------------------------------------------------------------------------
+*/
+/**
+ * Initializes the application by loading rescue points from the server
+ * and creating rescue markers on the map.
+ *
+ * @function
+ * @async
+ * @returns {void}
+ */
+const initialLoad = () => {
+
+  const loadRescuePoints = async () => {
+    let url = 'http://127.0.0.1:5000/rescue-point';
+    fetch(url, {
+      method: 'get',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        data.rescue_points.forEach((point) => {
+          createRescue(point.longitude, point.latitude,point.id);
+        });
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
+
+  loadRescuePoints();
+
+};
+
+window.addEventListener("load", function () {
+  initialLoad();
+});
