@@ -6,12 +6,6 @@
  */
 const scale = 500 / 200;
 
-/*
-  --------------------------------------------------------------------------------------
-  This function is used to create the vehicule on the map
-  It takes the x and y coordinates as parameters and creates a div element with the class 'vehicule'
-  --------------------------------------------------------------------------------------
-*/
 /**
  * Creates a vehicle element on the map at the specified coordinates.
  *
@@ -33,11 +27,6 @@ function createVehicule(x, y) {
   return point;
 }
 
-/*
-  --------------------------------------------------------------------------------------
-  This function is used to clear any point on the map  I
-  --------------------------------------------------------------------------------------
-*/
 /**
  * Creates and appends a visual marker (clear-point) to the map at the specified coordinates.
  *
@@ -59,11 +48,6 @@ function clearPoint(x, y) {
   return point;
 }
 
-/*
-  --------------------------------------------------------------------------------------
-  This function is used to create the rescue point on the map
-  --------------------------------------------------------------------------------------
-*/
 /**
  * Creates a rescue point on the map at the specified coordinates.
  *
@@ -87,11 +71,16 @@ function createRescue(x, y, id) {
   return point;
 }
 
-/*
-  --------------------------------------------------------------------------------------
-  This function is used to move the points on the map
-  --------------------------------------------------------------------------------------
-*/
+
+/**
+ * Animates the movement of a vehicle from an initial position to a final position
+ * on a 2D plane with smooth transitions.
+ *
+ * @param {number} xInitial - The initial x-coordinate of the vehicle.
+ * @param {number} yInitial - The initial y-coordinate of the vehicle.
+ * @param {number} xFinal - The final x-coordinate of the vehicle.
+ * @param {number} yFinal - The final y-coordinate of the vehicle.
+ */
 function moveVehicule(xInitial, yInitial, xFinal, yFinal) {
   const ponto = createVehicule(xInitial, yInitial); // Cria o ponto na posição inicial
 
@@ -120,11 +109,14 @@ function moveVehicule(xInitial, yInitial, xFinal, yFinal) {
   }, interval);
 }
 
-/*
-  --------------------------------------------------------------------------------------
-  This function is used to move the rescue point on the map
-  --------------------------------------------------------------------------------------
-*/
+/**
+ * Animates a rescue action by moving a point from an initial position to a final position.
+ *
+ * @param {number} xInitial - The initial x-coordinate of the point.
+ * @param {number} yInitial - The initial y-coordinate of the point.
+ * @param {number} xFinal - The final x-coordinate of the point.
+ * @param {number} yFinal - The final y-coordinate of the point.
+ */
 function rescueAction(xInitial, yInitial, xFinal, yFinal) {
   const ponto = createRescue(xInitial, yInitial); // Cria o ponto na posição inicial
 
@@ -150,11 +142,7 @@ function rescueAction(xInitial, yInitial, xFinal, yFinal) {
   }, interval);
 }
 
-/*
-  --------------------------------------------------------------------------------------
-  This function is used to post a new vehicule to the server
-  --------------------------------------------------------------------------------------
-*/
+
 const postVehicule = async (inputName, inputLatitude, inputLongitude) => {
   const formData = new FormData();
   formData.append('name', inputName);
@@ -176,11 +164,14 @@ const postVehicule = async (inputName, inputLatitude, inputLongitude) => {
     });
 }
 
-/*
-  --------------------------------------------------------------------------------------
-  This function is used to clear the form fields
-  --------------------------------------------------------------------------------------
-*/
+/**
+ * Clears the input and textarea fields of a specified form.
+ *
+ * @param {string} formularioId - The ID of the form to clear.
+ *
+ * The function iterates through all elements of the form and resets the value
+ * of input fields of type "text", "number", and "tel", as well as textareas.
+ */
 function clearForm(formularioId) {
   const formulario = document.getElementById(formularioId);
 
@@ -197,11 +188,14 @@ function clearForm(formularioId) {
   }
 };
 
-/*
-  --------------------------------------------------------------------------------------
-  This function is used to validate the input fields for vehicule name, latitude and longitude
-  --------------------------------------------------------------------------------------
-*/
+/**
+ * Creates a new vehicle by collecting input values for name, longitude, and latitude,
+ * validating them, and then sending the data to the `postVehicule` function.
+ * 
+ * @function
+ * @throws Will alert the user if the vehicle name is empty.
+ * @throws Will alert the user if the longitude or latitude are not valid numbers.
+ */
 const newVehicule = () => {
   let inputName = document.getElementById("vehiculeName").value;
   let inputLongitude = document.getElementById("vehiculeLongitude").value;
@@ -267,215 +261,22 @@ listForms.forEach(id => {
     })
 })()
 
-/*
-  --------------------------------------------------------------------------------------
-  This function is used to get the list of vehicules from the server
-  --------------------------------------------------------------------------------------
-*/
-const getVehiculeList = async () => {
-  let url = 'http://127.0.0.1:5000/vehicule';
-  fetch(url, {
-    method: 'get',
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      setUpTable(data.vehicules, 'table-vehicule');
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-}
-
-/*
-  --------------------------------------------------------------------------------------
-  This function is used to get the list of rescue points from the server
-  --------------------------------------------------------------------------------------
-*/
-const getRescuePointList = async () => {
-  let url = 'http://127.0.0.1:5000/rescue-point';
-  fetch(url, {
-    method: 'get',
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      setUpTable(data.rescue_points, 'table-rescue-point');
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-}
-
-/*
-  --------------------------------------------------------------------------------------
-  This fucntion is used to render the table with the data from the server
-  --------------------------------------------------------------------------------------
-*/
 /**
- * Populates an HTML table with data and initializes it as a DataTable.
- *
- * @param {Array<Object>} lista - An array of objects containing the data to populate the table.
- * @param {string} elementId - The ID of the table element to populate.
- *
- * Each object in the `lista` array should have the following properties:
- * - {string} name - The name to display in the first column.
- * - {number} latitude - The latitude to display in the second column.
- * - {number} longitude - The longitude to display in the third column.
- * - {number} id - The unique identifier used for the "Edit" button.
- *
- * The function clears any existing rows in the table body, appends new rows based on the `lista` data,
- * and initializes the table as a DataTable using the jQuery DataTables plugin.
- */
-function setUpTable(lista, elementId) {
-
-  const table = document.getElementById(elementId);
-  const tbody = table.querySelector('tbody');
-
-  if (tbody) {
-    while (tbody.firstChild) {
-      tbody.removeChild(tbody.firstChild);
-    }
-  }
-
-  let element = "#" + elementId;
-
-  $(element).find("tbody").html(
-    lista.map(x => `
-   <tr>
-    <td>${x.name}</td>
-    <td>${x.latitude}</td>                    
-    <td>${x.longitude}</td>
-    <td>
-    <a  class='btn btn-outline-success btn-sm btnEditar'   
-    data-toggle="tooltip" title="Editar"
-    data-id='${x.id}' onclick="perfomRescue(${x.id})">
-    <i class="fa fa-play"></i>
-    </a>    
-
-   </td>
-   </tr>`).join(""));
-
-  $(document).ready(function () {
-    $(element).DataTable();
-  });
-
-};
-
-/*
-  --------------------------------------------------------------------------------------
-  This function is used to change the menu when the user clicks on the button
-  --------------------------------------------------------------------------------------
-*/
-/**
- * Changes the visibility of menu sections based on the provided menu ID.
- * It hides all menu sections by adding a specific CSS class and then
- * displays the section corresponding to the given menu ID.
- *
- * @param {number} menuId - The ID of the menu to display:
- *   - 1: Displays the "Vehicule Form" section.
- *   - 2: Displays the "Vehicule List" section and fetches the vehicule list.
- *   - 3: Displays the "Rescue Form" section.
- *   - 4: Displays the "Rescue List" section and fetches the rescue point list.
- *
- * @throws {Error} Logs an error message if an invalid menu ID is provided.
- */
-const changeMenu = (menuId) => {
-
-  const elementos = document.querySelectorAll('.menu'); // Seleciona os elementos que serão manipulados
-  const classe = 'd-none'; // Nome da classe a ser adicionada ou removida
-
-  // Remove a classe de todos os elementos antes de adicionar a nova
-  elementos.forEach(elemento => elemento.classList.add(classe));
-
-  // Switch case para diferentes opções
-  switch (menuId) {
-    case 1: // Vehicule Form
-      elementos.forEach((elemento, index) => {
-        if (index === 0) {
-          elemento.classList.remove(classe);
-        }
-      });
-      break;
-    case 2: // Vehicule List
-      elementos.forEach((elemento, index) => {
-        if (index === 1) {
-          elemento.classList.remove(classe);
-        }
-      });
-      getVehiculeList();
-      break;
-    case 3: // Rescue Form
-      elementos.forEach((elemento, index) => {
-        if (index === 2) {
-          elemento.classList.remove(classe);
-        }
-      });
-      break;
-    case 4: // Rescue List
-      elementos.forEach((elemento, index) => {
-        if (index === 3) {
-          elemento.classList.remove(classe);
-        }
-      });
-      getRescuePointList();
-      break;
-    default:
-      console.log('Opção inválida!');
-  }
-};
-
-/*
-  --------------------------------------------------------------------------------------
-  This function is used to perform the rescue action
-  --------------------------------------------------------------------------------------
-*/
-/**
- * Performs a rescue operation by sending a GET request to the specified endpoint with the given ID.
- * Upon success, it moves the vehicle to the rescue point, updates the vehicle list, and clears the rescue point after a delay.
- *
- * @param {number|string} id - The identifier of the rescue operation.
- * @returns {void}
- */
-const perfomRescue = (id) => {
-  let url = `http://127.0.0.1:5000/perform-rescue?id=${id}`;
-  fetch(url, {
-    method: 'get',
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      moveVehicule(0, 0, data.rescue_point.longitude, data.rescue_point.latitude);
-      getVehiculeList();
-      setInterval(() => {
-        // clearPoint(data.rescue_point.longitude, data.rescue_point.latitude);
-        
-        const elements = document.querySelectorAll(`.${data.rescue_point.id}`);
-        
-        elements.forEach((element) => {
-          element.remove();
-        });
-      }, 2000); // 2 seconds delay before clearing the point      
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-
-};
-
-/*
-  --------------------------------------------------------------------------------------
-  Initial loading funciton
-  --------------------------------------------------------------------------------------
-*/
-/**
- * Initializes the application by loading rescue points from the server
- * and creating rescue markers on the map.
- *
- * @function
+ * Fetches the list of vehicles from the server and populates a table with the data.
+ * 
+ * This function sends a GET request to the specified URL to retrieve vehicle data.
+ * On success, it processes the response and calls the `setUpTable` function to display
+ * the data in a table. If an error occurs during the fetch operation, it logs the error
+ * to the console.
+ * 
  * @async
- * @returns {void}
+ * @function getVehiculeList
+ * @returns {Promise<void>} A promise that resolves when the vehicle data is fetched and processed.
  */
 const initialLoad = () => {
 
   const loadRescuePoints = async () => {
+
     let url = 'http://127.0.0.1:5000/rescue-point';
     fetch(url, {
       method: 'get',
