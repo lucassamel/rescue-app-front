@@ -82,25 +82,22 @@ function createRescue(x, y, id) {
  * @param {number} yFinal - The final y-coordinate of the vehicle.
  */
 function moveVehicule(xInitial, yInitial, xFinal, yFinal) {
-  const ponto = createVehicule(xInitial, yInitial); // Cria o ponto na posição inicial
+  const ponto = createVehicule(xInitial, yInitial); 
 
   let xCurrent = xInitial;
   let yCurrent = yInitial;
 
-  const interval = 20; // Intervalo entre os movimentos, em milissegundos
+  const interval = 20; 
 
-  const move = setInterval(() => {
-    // Verifica se o ponto chegou ao destino
+  const move = setInterval(() => {    
     if (Math.abs(xCurrent - xFinal) < 1 && Math.abs(yCurrent - yFinal) < 1) {
-      clearInterval(move); // Para o movimento
+      clearInterval(move); 
       return;
     }
 
-    // Atualiza as coordenadas, movendo gradualmente
-    xCurrent += (xFinal - xCurrent) * 0.1; // Movimento suave no eixo X
-    yCurrent += (yFinal - yCurrent) * 0.1; // Movimento suave no eixo Y
-
-    // Converte as novas coordenadas para posições relativas
+    xCurrent += (xFinal - xCurrent) * 0.1; 
+    yCurrent += (yFinal - yCurrent) * 0.1; 
+    
     const posX = (xCurrent + 100) * scale;
     const posY = (100 - yCurrent) * scale;
 
@@ -238,6 +235,14 @@ const getRescuePointList = async () => {
     });
 }
 
+/**
+ * Performs a rescue operation by sending a GET request to the specified endpoint
+ * with the provided rescue ID. Once the rescue data is retrieved, it moves the vehicle
+ * to the rescue point, updates the vehicle list, and removes the rescue point from the DOM
+ * after a short delay.
+ *
+ * @param {number} id - The unique identifier of the rescue operation.
+ */
 const perfomRescue = (id) => {
   let url = `http://127.0.0.1:5000/perform-rescue?id=${id}`;
   fetch(url, {
@@ -262,6 +267,16 @@ const perfomRescue = (id) => {
 
 };
 
+/**
+ * Deletes a rescue point by its ID and updates the UI accordingly.
+ *
+ * Sends a DELETE request to the server to remove the specified rescue point.
+ * Upon successful deletion, it clears all rescue point elements from the map,
+ * reloads the rescue point list, performs the initial load, and displays a success alert.
+ * Logs an error to the console if the request fails.
+ *
+ * @param {number|string} id - The ID of the rescue point to be deleted.
+ */
 const deleteRescue = (id) => {
   let url = `http://127.0.0.1:5000/rescue-point?id=${id}`;
   fetch(url, {
