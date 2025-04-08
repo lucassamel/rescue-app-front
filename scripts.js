@@ -72,6 +72,7 @@ function createRescue(x, y, id) {
 }
 
 
+
 /**
  * Animates the movement of a vehicle from an initial position to a final position
  * on a 2D plane with smooth transitions.
@@ -138,7 +139,6 @@ function rescueAction(xInitial, yInitial, xFinal, yFinal) {
     ponto.style.top = `${posY}px`;
   }, interval);
 }
-
 
 const postVehicule = async (inputName, inputLatitude, inputLongitude) => {
   const formData = new FormData();
@@ -298,8 +298,34 @@ const deleteRescue = (id) => {
     .catch((error) => {
       console.error('Error:', error);
     });
-
 };
+
+const createRandonRescuePoints = async () => {
+  const formData = new FormData();
+  formData.append('number', 50);  
+
+  let url = 'http://127.0.0.1:5000/generate-rescue-point';
+  fetch(url, {
+    method: 'post',
+    body: formData
+  })
+    .then((response) => console.log(response.json()))
+    .then(() => {
+      const container = document.getElementById('map');
+      
+      const elementos = container.querySelectorAll('.rescue-point');
+
+      elementos.forEach(elemento => {
+        elemento.remove();
+      });
+      getRescuePointList();
+      initialLoad();
+      alert('50 Randon Rescue Points created!');
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
 
 /*
 --------------------------------------------------------------------------------------
@@ -368,7 +394,7 @@ listForms.forEach(id => {
  * The function clears any existing rows in the table body, appends new rows based on the `lista` data,
  * and initializes the table as a DataTable using the jQuery DataTables plugin.
  */
-function setUpTable(lista, elementId) {
+function setUpTable(lista, elementId, doRescue) {
 
   const table = document.getElementById(elementId);
   const tbody = table.querySelector('tbody');
@@ -388,11 +414,16 @@ function setUpTable(lista, elementId) {
     <td>${x.latitude}</td>                    
     <td>${x.longitude}</td>
     <td>
-    <a  class='btn btn-outline-success btn-sm btnEditar'   
-    data-toggle="tooltip" title="Editar"
-    data-id='${x.id}' onclick="perfomRescue(${x.id})">
+    <a  class='btn btn-outline-success btn-sm ${doRescue ? '' : 'd-none'}'   
+    data-toggle="tooltip" title="Perform Rescue"
+    onclick="perfomRescue(${x.id})">
     <i class="fa fa-play"></i>
-    </a>    
+    </a> 
+    <a  class='btn btn-outline-danger btn-sm ${doRescue ? 'd-none' : ''}'   
+    data-toggle="tooltip" title="Delete Rescue Point"
+    onclick="deleteRescue(${x.id})">
+    <i class="fa fa-times"></i>
+    </a>      
 
    </td>
    </tr>`).join(""));
