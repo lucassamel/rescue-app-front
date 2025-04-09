@@ -13,10 +13,10 @@ const scale = 500 / 200;
  * @param {number} y - The y-coordinate of the vehicle's position.
  * @returns {HTMLDivElement} The created vehicle element.
  */
-function createVehicule(x, y) {
-  const map = document.getElementById('map');
+function createVehicule(x, y, id) {
   const point = document.createElement('div');
-  point.className = 'vehicule';
+  point.className = 'vehicule-point';
+  point.id = `${id}`; // Set the ID of the vehicle element
 
   const posX = (x + 100) * scale;
   const posY = (100 - y) * scale;
@@ -82,23 +82,23 @@ function createRescue(x, y, id) {
  * @param {number} xFinal - The final x-coordinate of the vehicle.
  * @param {number} yFinal - The final y-coordinate of the vehicle.
  */
-function moveVehicule(xInitial, yInitial, xFinal, yFinal) {
-  const ponto = createVehicule(xInitial, yInitial); 
+function moveVehicule(xInitial, yInitial, xFinal, yFinal, vehiculeId) {
+  const ponto = createVehicule(xInitial, yInitial, vehiculeId);
 
   let xCurrent = xInitial;
   let yCurrent = yInitial;
 
-  const interval = 20; 
+  const interval = 20;
 
-  const move = setInterval(() => {    
+  const move = setInterval(() => {
     if (Math.abs(xCurrent - xFinal) < 1 && Math.abs(yCurrent - yFinal) < 1) {
-      clearInterval(move); 
+      clearInterval(move);
       return;
     }
 
-    xCurrent += (xFinal - xCurrent) * 0.1; 
-    yCurrent += (yFinal - yCurrent) * 0.1; 
-    
+    xCurrent += (xFinal - xCurrent) * 0.1;
+    yCurrent += (yFinal - yCurrent) * 0.1;
+
     const posX = (xCurrent + 100) * scale;
     const posY = (100 - yCurrent) * scale;
 
@@ -243,22 +243,30 @@ const getRescuePointList = async () => {
  *
  * @param {number} id - The unique identifier of the rescue operation.
  */
-const perfomRescue = (id) => {
+const perfomRescue = async (id, longitude, latitude) => {
   let url = `http://127.0.0.1:5000/perform-rescue?id=${id}`;
   fetch(url, {
     method: 'get',
   })
     .then((response) => response.json())
     .then((data) => {
-      moveVehicule(0, 0, data.rescue_point.longitude, data.rescue_point.latitude);
+      const container = document.getElementById('map');
+      const elementos = container.querySelectorAll('.vehicule-point');
+      elementos.forEach(elemento => {
+        elemento.remove();
+      });
+
+      // let vehiclePoint = $(`#${id}.vehicule-point`);
+
+      // vehiclePoint.remove(); 
+      moveVehicule(longitude, latitude, data.rescue_point.longitude, data.rescue_point.latitude, id);
       getVehiculeList();
       setInterval(() => {
-        // clearPoint(data.rescue_point.longitude, data.rescue_point.latitude);
 
-        const elements = $(`#${data.rescue_point.id}.rescue-point`);
+        const element = $(`#${data.rescue_point.id}.rescue-point`);
         // rescueAction(0, 0, data.rescue_point.longitude, data.rescue_point.latitude);
 
-        elements.remove(); // Remove the rescue point from the DOM
+        element.remove(); // Remove the rescue point from the DOM
       }, 1000); // 2 seconds delay before clearing the point      
     })
     .catch((error) => {
@@ -277,15 +285,15 @@ const perfomRescue = (id) => {
  *
  * @param {number|string} id - The ID of the rescue point to be deleted.
  */
-const deleteRescue = (id) => {
+const deleteRescue = async (id) => {
   let url = `http://127.0.0.1:5000/rescue-point?id=${id}`;
   fetch(url, {
     method: 'delete',
   })
     .then((response) => response.json())
-    .then((data) => {      
+    .then((data) => {
       const container = document.getElementById('map');
-      
+
       const elementos = container.querySelectorAll('.rescue-point');
 
       elementos.forEach(elemento => {
@@ -302,7 +310,7 @@ const deleteRescue = (id) => {
 
 const createRandonRescuePoints = async () => {
   const formData = new FormData();
-  formData.append('number', 50);  
+  formData.append('number', 50);
 
   let url = 'http://127.0.0.1:5000/generate-rescue-point';
   fetch(url, {
@@ -311,13 +319,7 @@ const createRandonRescuePoints = async () => {
   })
     .then((response) => console.log(response.json()))
     .then(() => {
-      const container = document.getElementById('map');
-      
-      const elementos = container.querySelectorAll('.rescue-point');
 
-      elementos.forEach(elemento => {
-        elemento.remove();
-      });
       getRescuePointList();
       initialLoad();
       alert('50 Randon Rescue Points created!');
@@ -416,7 +418,7 @@ function setUpTable(lista, elementId, doRescue) {
     <td>
     <a  class='btn btn-outline-success btn-sm ${doRescue ? '' : 'd-none'}'   
     data-toggle="tooltip" title="Perform Rescue"
-    onclick="perfomRescue(${x.id})">
+    onclick="perfomRescue(${x.id},${x.longitude},${x.latitude})">
     <i class="fa fa-play"></i>
     </a> 
     <a  class='btn btn-outline-danger btn-sm ${doRescue ? 'd-none' : ''}'   

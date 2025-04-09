@@ -29,7 +29,7 @@ body {
     overflow: hidden;
 }
 
-#map .vehicule {
+#map .vehicule-point {
     position: absolute;
     width: 6px;
     height: 6px;
