@@ -409,6 +409,12 @@ function setUpTable(lista, elementId, doRescue) {
 
   let element = "#" + elementId;
 
+  
+if ($.fn.DataTable.isDataTable(element)) {
+      $(element).DataTable().destroy();
+  }
+  
+
   $(element).find("tbody").html(
     lista.map(x => `
    <tr>
