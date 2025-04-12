@@ -154,7 +154,29 @@ const postVehicule = async (inputName, inputLatitude, inputLongitude) => {
     .then((response) => console.log(response.json()))
     .then(() => {
       clearForm('form-vehicule');
-      alert('Vehicule submitted');
+      alert('Vehicule submitted');     
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
+
+const postRescuePoint = async (inputName, inputLatitude, inputLongitude) => {
+  const formData = new FormData();
+  formData.append('name', inputName);
+  formData.append('latitude', inputLatitude);
+  formData.append('longitude', inputLongitude);
+
+  let url = 'http://127.0.0.1:5000/rescue-point';
+  fetch(url, {
+    method: 'post',
+    body: formData
+  })
+    .then((response) => console.log(response.json()))
+    .then(() => {
+      clearForm('form-rescue-point');
+      alert('Rescue Point submitted');     
+      initialLoad();
     })
     .catch((error) => {
       console.error('Error:', error);
@@ -204,6 +226,20 @@ const newVehicule = () => {
     alert("Latitude and Longitude needs to be numbers!");
   } else {
     postVehicule(inputName, inputLongitude, inputLatitude)
+  }
+}
+
+const newRescuePoint = () => {
+  let inputName = document.getElementById("rescueName").value;
+  let inputLongitude = document.getElementById("rescueLongitude").value;
+  let inputLatitude = document.getElementById("rescueLatitude").value;
+
+  if (inputName === '') {
+    alert("Write the name of the Rescue Point!");
+  } else if (isNaN(inputLongitude) || isNaN(inputLatitude)) {
+    alert("Latitude and Longitude needs to be numbers!");
+  } else {
+    postRescuePoint(inputName, inputLongitude, inputLatitude)
   }
 }
 

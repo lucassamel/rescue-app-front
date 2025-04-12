@@ -115,28 +115,28 @@
                 <form id="form-rescue-point" class="form needs-validation menu d-none">
                     <div class="mb-3">
                         <label for="exampleInputEmail1" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="vehiculeName">
+                        <input type="text" class="form-control" id="rescueName">
                         <div class="invalid-feedback">
                             Please provide a valid city.
                         </div>
                     </div>
                     <div class="mb-3">
                         <label for="exampleInputPassword1" class="form-label">Latitude</label>
-                        <input type="number" max="100" min="-100" class="form-control latLong" id="vehiculeLatitude">
+                        <input type="number" max="100" min="-100" class="form-control latLong" id="rescueLatitude">
                         <div class="invalid-feedback">
                             The number should be between -100 and 100.
                         </div>
                     </div>
                     <div class="mb-3">
                         <label for="exampleInputPassword1" class="form-label">Longitude</label>
-                        <input type="number" max="100" min="-100" class="form-control latLong" id="vehiculeLongitude">
+                        <input type="number" max="100" min="-100" class="form-control latLong" id="rescueLongitude">
                         <div class="invalid-feedback">
                             The number should be between -100 and 100.
                         </div>
                     </div>
 
                     <button onclick="createRandonRescuePoints()" class="btn btn-warning">Create 50 randon points</button>
-                    <button type="submit" onclick="rescue()" class="btn btn-success">Submit Rescue Point</button>
+                    <button type="submit" onclick="newRescuePoint()" class="btn btn-success">Submit Rescue Point</button>
                 </form>
 
                 <!-- Table Rescue Point -->
